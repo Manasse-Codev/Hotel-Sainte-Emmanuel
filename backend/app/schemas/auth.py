@@ -1,16 +1,22 @@
 from typing import Optional
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, Field
 
 class RegisterRequest(BaseModel):
-    first_name: str
-    last_name: str
-    email: EmailStr
-    password: str
-    phone: Optional[str] = None
+    first_name: str = Field(..., min_length=2, max_length=50)
+    last_name: str = Field(..., min_length=2, max_length=50)
+    email: EmailStr = Field(..., max_length=100)
+    password: str = Field(..., min_length=6, max_length=128)
+    phone: Optional[str] = Field(None, max_length=25)
+
+    class Config:
+        extra = "ignore"
 
 class LoginRequest(BaseModel):
-    email: EmailStr
-    password: str
+    email: EmailStr = Field(..., max_length=100)
+    password: str = Field(..., min_length=1, max_length=128)
+
+    class Config:
+        extra = "ignore"
 
 class TokenResponse(BaseModel):
     access_token: str
@@ -18,8 +24,14 @@ class TokenResponse(BaseModel):
     user: dict
 
 class ForgotPasswordRequest(BaseModel):
-    email: EmailStr
+    email: EmailStr = Field(..., max_length=100)
+
+    class Config:
+        extra = "ignore"
 
 class ResetPasswordRequest(BaseModel):
-    token: str
-    new_password: str
+    token: str = Field(..., min_length=4, max_length=128)
+    new_password: str = Field(..., min_length=6, max_length=128)
+
+    class Config:
+        extra = "ignore"

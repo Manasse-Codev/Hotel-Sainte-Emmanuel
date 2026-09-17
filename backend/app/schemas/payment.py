@@ -1,14 +1,17 @@
 from datetime import datetime
 from typing import Optional
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 class PaymentCreate(BaseModel):
-    reservation_id: str
-    amount: int
-    payment_method: str = "Wave"
+    reservation_id: str = Field(..., min_length=1, max_length=50)
+    amount: Optional[int] = Field(None, ge=1, le=100_000_000)
+    payment_method: str = Field("Wave", min_length=2, max_length=50)
+
+    class Config:
+        extra = "ignore"
 
 class PaymentStatusUpdate(BaseModel):
-    status: str  # "pending", "validated", "failed"
+    status: str = Field(..., pattern="^(pending|validated|failed)$")
 
 class PaymentOut(BaseModel):
     id: str

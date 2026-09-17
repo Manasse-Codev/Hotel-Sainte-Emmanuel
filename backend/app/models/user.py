@@ -16,6 +16,7 @@ class User(Base):
     loyalty_tier = Column(String, default="standard")  # "standard", "silver", "gold"
     is_verified = Column(Boolean, default=True)
     reset_token = Column(String, nullable=True)
+    reset_token_expires_at = Column(DateTime, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 

@@ -1,4 +1,5 @@
-import uuid
+import secrets
+from datetime import datetime, timedelta
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from ..database import get_db
@@ -7,15 +8,20 @@ from ..models.notification import Notification
 from ..models.activity import Activity
 from ..models.reservation import Reservation
 from ..schemas.auth import RegisterRequest, LoginRequest, TokenResponse, ForgotPasswordRequest, ResetPasswordRequest
-from ..schemas.user import UserOut, UserStats
 from ..core.security import hash_password, verify_password, create_access_token
 from ..core.deps import get_current_user
+from ..core.rate_limiter import auth_login_limiter, auth_register_limiter, auth_forgot_limiter
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
-@router.post("/register", response_model=TokenResponse)
+@router.post(
+    "/register",
+    response_model=TokenResponse,
+    dependencies=[Depends(auth_register_limiter)]
+)
 def register(data: RegisterRequest, db: Session = Depends(get_db)):
-    existing = db.query(User).filter(User.email == data.email.lower()).first()
+    email_clean = data.email.lower().strip()
+    existing = db.query(User).filter(User.email == email_clean).first()
     if existing:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -25,10 +31,10 @@ def register(data: RegisterRequest, db: Session = Depends(get_db)):
     user = User(
         first_name=data.first_name.strip(),
         last_name=data.last_name.strip(),
-        email=data.email.lower().strip(),
+        email=email_clean,
         phone=data.phone.strip() if data.phone else None,
         password_hash=hash_password(data.password),
-        role="client",
+        role="client",  # Strictly client: prevents privilege escalation
         loyalty_tier="standard",
         is_verified=True,
     )
@@ -67,9 +73,14 @@ def register(data: RegisterRequest, db: Session = Depends(get_db)):
         }
     }
 
-@router.post("/login", response_model=TokenResponse)
+@router.post(
+    "/login",
+    response_model=TokenResponse,
+    dependencies=[Depends(auth_login_limiter)]
+)
 def login(data: LoginRequest, db: Session = Depends(get_db)):
-    user = db.query(User).filter(User.email == data.email.lower().strip()).first()
+    email_clean = data.email.lower().strip()
+    user = db.query(User).filter(User.email == email_clean).first()
     if not user or not verify_password(data.password, user.password_hash):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -106,7 +117,7 @@ def logout(current_user: User = Depends(get_current_user)):
 
 @router.get("/me")
 def get_me(current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
-    # Calculate stats
+    # Calculate stats securely
     reservations = db.query(Reservation).filter(Reservation.user_id == current_user.id).all()
     total_stays = len(reservations)
     total_nights = 0
@@ -134,28 +145,47 @@ def get_me(current_user: User = Depends(get_current_user), db: Session = Depends
         }
     }
 
-@router.post("/forgot-password")
+@router.post(
+    "/forgot-password",
+    dependencies=[Depends(auth_forgot_limiter)]
+)
 def forgot_password(data: ForgotPasswordRequest, db: Session = Depends(get_db)):
-    user = db.query(User).filter(User.email == data.email.lower().strip()).first()
+    email_clean = data.email.lower().strip()
+    user = db.query(User).filter(User.email == email_clean).first()
     if user:
-        reset_token = str(uuid.uuid4())[:8]
+        reset_token = secrets.token_urlsafe(24)
         user.reset_token = reset_token
+        user.reset_token_expires_at = datetime.utcnow() + timedelta(minutes=15)
         db.commit()
-        return {
-            "message": "Un code de réinitialisation a été généré.",
-            "reset_token": reset_token  # For demo convenience
-        }
-    return {"message": "Si l'adresse existe, un lien a été envoyé."}
+    
+    # Generic safe response to prevent user enumeration and secret leak
+    return {
+        "message": "Si l'adresse email existe, un lien de réinitialisation a été préparé."
+    }
 
-@router.post("/reset-password")
+@router.post(
+    "/reset-password",
+    dependencies=[Depends(auth_forgot_limiter)]
+)
 def reset_password(data: ResetPasswordRequest, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.reset_token == data.token).first()
-    if not user:
+    now = datetime.utcnow()
+
+    if not user or not user.reset_token_expires_at or user.reset_token_expires_at < now:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Jeton de réinitialisation invalide ou expiré",
         )
+
     user.password_hash = hash_password(data.new_password)
     user.reset_token = None
+    user.reset_token_expires_at = None
+
+    act = Activity(
+        user_id=user.id,
+        action="password_reset",
+        description="Réinitialisation du mot de passe réussie",
+    )
+    db.add(act)
     db.commit()
     return {"message": "Mot de passe réinitialisé avec succès"}

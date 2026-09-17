@@ -37,6 +37,32 @@ def create_payment(
     if res.user_id != current_user.id and current_user.role != "admin":
         raise HTTPException(status_code=403, detail="Accès non autorisé")
 
+    if res.status == "cancelled":
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Impossible d'effectuer un paiement pour une réservation annulée",
+        )
+
+    # Prevent duplicate validated payments
+    existing_paid = db.query(Payment).filter(
+        Payment.reservation_id == res.id,
+        Payment.status == "validated"
+    ).first()
+    if existing_paid:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Cette réservation a déjà fait l'objet d'un règlement validé.",
+        )
+
+    # Enforce server-authoritative amount: recalculate/verify
+    expected_amount = res.total_amount
+    if data.amount is not None and data.amount != expected_amount:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Montant invalide. Le montant exact de la réservation est de {expected_amount:,} FCFA.",
+        )
+
+    pay_amount = expected_amount
     pay_id = f"PAY-2025-{random.randint(100, 999)}"
     ref = f"{data.payment_method.upper()}-CI-{random.randint(100000, 999999)}"
 
@@ -44,22 +70,26 @@ def create_payment(
         id=pay_id,
         reservation_id=res.id,
         user_id=current_user.id,
-        amount=data.amount,
+        amount=pay_amount,
         status="validated",
         payment_method=data.payment_method,
         transaction_reference=ref,
     )
     db.add(payment)
 
+    # Auto-confirm reservation upon successful payment if it was pending
+    if res.status == "pending":
+        res.status = "confirmed"
+
     notif = Notification(
         user_id=current_user.id,
         title="Paiement validé",
-        message=f"Votre règlement de {data.amount:,} FCFA pour la réservation {res.id} a été confirmé ({data.payment_method}).",
+        message=f"Votre règlement de {pay_amount:,} FCFA pour la réservation {res.id} a été confirmé ({data.payment_method}).",
     )
     act = Activity(
         user_id=current_user.id,
         action="payment",
-        description=f"Paiement de {data.amount:,} FCFA enregistré ({data.payment_method})",
+        description=f"Paiement de {pay_amount:,} FCFA enregistré ({data.payment_method})",
     )
     db.add_all([notif, act])
     db.commit()

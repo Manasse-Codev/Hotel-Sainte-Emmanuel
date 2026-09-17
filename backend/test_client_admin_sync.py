@@ -58,7 +58,7 @@ def run_sync_test():
     print(f"✓ Étape 2 : Connexion client réussie (Token JWT reçu pour {login_res['user']['first_name']})")
 
     # Étape 3 : Effectuer une réservation depuis le site public
-    offset = random.randint(10, 180)
+    offset = random.randint(200, 800)
     d_in = (date.today() + timedelta(days=offset)).isoformat()
     d_out = (date.today() + timedelta(days=offset + 3)).isoformat()
     room_id = "standard"

@@ -1,9 +1,11 @@
+import html
 from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from ..database import get_db
 from ..models.user import User
 from ..models.review import Review
+from ..models.reservation import Reservation
 from ..models.activity import Activity
 from ..schemas.review import ReviewCreate, ReviewOut
 from ..core.deps import get_current_user
@@ -37,12 +39,24 @@ def create_review(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
+    # Verify reservation ownership if provided
+    if data.reservation_id:
+        res = db.query(Reservation).filter(Reservation.id == data.reservation_id).first()
+        if not res or (res.user_id != current_user.id and current_user.role != "admin"):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Numéro de réservation invalide ou non associé à votre compte",
+            )
+
+    # Sanitize comment
+    clean_comment = html.escape(data.comment.strip())
+
     review = Review(
         user_id=current_user.id,
         reservation_id=data.reservation_id,
         rating=data.rating,
-        comment=data.comment.strip(),
-        status="approved",  # auto-approved for fluid experience, can be moderated in admin
+        comment=clean_comment,
+        status="approved",
     )
     db.add(review)
 
