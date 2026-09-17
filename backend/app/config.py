@@ -22,6 +22,8 @@ class Settings(BaseSettings):
     @field_validator("DATABASE_URL", mode="before")
     @classmethod
     def resolve_db_url(cls, v: str) -> str:
+        if v and v.startswith("postgres://"):
+            v = v.replace("postgres://", "postgresql://", 1)
         if v and "sqlite:///./" in v:
             db_name = v.split("sqlite:///./")[-1]
             return f"sqlite:///{BACKEND_DIR / db_name}"
