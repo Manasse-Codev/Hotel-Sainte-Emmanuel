@@ -59,6 +59,7 @@ export default function LightboxModal({ image, isOpen, onClose }) {
           className="w-full h-full object-contain animate-fade-in"
           key={current.id}
           src={current.image}
+          onError={(e) => { e.currentTarget.src = '/images/hero.jpg'; }}
           style={{ maxHeight: '80vh' }}
         />
         <div className="text-center mt-4">

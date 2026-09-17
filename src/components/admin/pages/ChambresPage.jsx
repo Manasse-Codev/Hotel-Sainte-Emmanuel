@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { api } from "../../../services/api";
+import { getRoomImage } from '../../../data/rooms';
 
 const statusConfig = {
   occupied: { label: 'Occupée', classes: 'bg-primary text-on-primary' },
@@ -95,7 +96,9 @@ export default function ChambresPage() {
                   <img
                     alt={room.name}
                     className="w-full h-full object-cover"
-                    src={room.image}
+                    loading="lazy"
+                    src={getRoomImage(room)}
+                    onError={(e) => { e.currentTarget.src = '/images/hero.jpg'; }}
                   />
                   <div className="absolute top-3 right-3">
                     <span className={`font-jakarta text-label-xs px-2.5 py-1 uppercase tracking-wider font-semibold ${cfg.classes}`}>

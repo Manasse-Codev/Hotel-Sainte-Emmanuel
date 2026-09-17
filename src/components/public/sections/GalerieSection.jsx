@@ -72,7 +72,9 @@ export default function GalerieSection({ onOpenLightbox }) {
               <img
                 alt={img.alt}
                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                loading="lazy"
                 src={img.image}
+                onError={(e) => { e.currentTarget.src = '/images/hero.jpg'; }}
               />
               <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-4">
                 <span className="text-label-sm tracking-widest uppercase text-white/70">{img.subtitle}</span>

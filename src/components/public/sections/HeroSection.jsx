@@ -67,7 +67,7 @@ export default function HeroSection() {
             decoding="async"
             fetchPriority="high"
             loading="eager"
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuDNgu0QWrMhs1smgBH0M6oeoEyKdgkEQShYLJ6Jh27iEj05NvF8Pki6ANO8jT3S5eHpwUvLJahXQQaqkGsGs3E68qrwo2n63xI1NE-np8HUI7jyTMkyY1BlxEJMVgBOyIonorBYdwqeBftTyeSL7diE975uNWi5ZyvB3zg0ppXUQ6ZC8bFeFntPjR_jZowISHbah625FpkzwcXONjc3qZoJBcRGTZyEnjuGc9x5qLC450JZPAPp8YK6vWpDglcVkHNqzA"
+            src="/images/hero.jpg"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
           <div className="absolute bottom-6 left-6 text-white">

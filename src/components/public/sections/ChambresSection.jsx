@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { rooms as initialRooms } from '../../../data/rooms';
+import { rooms as initialRooms, getRoomImage } from '../../../data/rooms';
 import { api } from '../../../services/api';
 
 export default function ChambresSection({ onOpenRoom, onQuickBook }) {
@@ -67,7 +67,9 @@ export default function ChambresSection({ onOpenRoom, onQuickBook }) {
                   <img
                     alt={room.name}
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    src={room.image}
+                    loading="lazy"
+                    src={getRoomImage(room)}
+                    onError={(e) => { e.currentTarget.src = '/images/hero.jpg'; }}
                   />
                   <div
                     className={`absolute top-4 right-4 bg-surface/90 backdrop-blur-sm px-3 py-1 text-label-sm uppercase tracking-wider font-medium ${

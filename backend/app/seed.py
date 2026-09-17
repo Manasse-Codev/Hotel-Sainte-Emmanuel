@@ -52,7 +52,7 @@ def seed_database(db: Session):
                     "Literie prestige",
                     "Espace bureau",
                 ]),
-                "image": "https://lh3.googleusercontent.com/aida-public/AB6AXuCJoQSDojDpleayH2WQZBgkwooY9dc1Rte2Fe9h5WPzLfIA-CSphbT-8bjgvvGCQqh9PwXt4SzQWaYNojiNfT-Mg0hWgIKr48wOMXcl4a8h1hgzuQ_vj4dRNyEkTpvgEHpIKyaXayzfDpPKHpkp5dy2uSdhoWULpwN2YAoY_5oD_QIlxOEhbL_f0tZ0T1BqYwjXOPcdeF8Wsf-VI6cjWjAoUceuedFu8MMB8ch1mV5fDohfD1-f3AhhgtAfLI71wkiZRg",
+                "image": "/images/room-standard.jpg",
                 "status": "available",
             },
             {
@@ -73,7 +73,7 @@ def seed_database(db: Session):
                     "Literie premium",
                     "Télévision",
                 ]),
-                "image": "https://lh3.googleusercontent.com/aida-public/AB6AXuDbY1diafG7i1cEKjlLetLKJ4sclhwTHx3sGhFY4LKuGWkabIO8keGeO_8XLs6SyOGjHwu_OZiG6wEKxuckBkkFysE0AFvBSOFfqLvY6fOcuitQ_vtnlHQpMfbB-U4A7QXFF0m0JXwV8hf8Au6klEG_LybkN67nb5o62DN0r2loKLBzjpUkxE7FGwS4CToJbWIfixkrKTPxyz3FZicoL5zDgxZPuRH8SNPHqQrYjndyrYTBIm7iCXXCyytNaYCHmDI46A",
+                "image": "/images/room-superieure.jpg",
                 "status": "available",
             },
             {
@@ -95,13 +95,24 @@ def seed_database(db: Session):
                     "Baignoire & Douche",
                     "Mini-bar garni",
                 ]),
-                "image": "https://lh3.googleusercontent.com/aida-public/AB6AXuDwwGFlGM5XSjCCjZEtIZKTzVfQZgn8qW0t9RFolTZ8jxXxk6A4xJ3r5sVxNKqdXHnwq5IXps0-Z7M05WsjJROgaOgIGUyhM3AbtXxU4-D--b0xPTdtl-M1LDkDJsHn5otd8cERbCqpc0pp6DOCfEyz29ahZHmwmiWCArr3SsiV0aNKuF3XbGPZkMQPerdCkBHtMYOHaiFXggRJkJ_90LZavXYEpGLFhx20ryzTqRkCW2mQqMrXaZobJgg9Zxpekf2TWw",
+                "image": "/images/room-deluxe.jpg",
                 "status": "available",
             },
         ]
         for r_data in rooms_data:
             room = Room(**r_data)
             db.add(room)
+        db.commit()
+    else:
+        # Migrate existing rooms from external Google URLs to high-reliability local assets
+        for r in db.query(Room).all():
+            if r.image and "googleusercontent" in r.image:
+                if "superieure" in r.id:
+                    r.image = "/images/room-superieure.jpg"
+                elif "deluxe" in r.id:
+                    r.image = "/images/room-deluxe.jpg"
+                else:
+                    r.image = "/images/room-standard.jpg"
         db.commit()
 
     # 3. Seed Hotel Production Settings

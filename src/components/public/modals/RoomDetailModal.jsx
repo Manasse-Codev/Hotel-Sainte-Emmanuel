@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { getRoomImage } from '../../../data/rooms';
 
 export default function RoomDetailModal({ room, isOpen, onClose, onReserve }) {
   useEffect(() => {
@@ -29,7 +30,9 @@ export default function RoomDetailModal({ room, isOpen, onClose, onReserve }) {
           <img
             alt={room.name}
             className="w-full h-full object-cover"
-            src={room.image}
+            loading="lazy"
+            src={getRoomImage(room)}
+            onError={(e) => { e.currentTarget.src = '/images/hero.jpg'; }}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
           <div className="absolute bottom-6 left-8 text-white">
