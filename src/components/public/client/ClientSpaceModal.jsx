@@ -103,6 +103,7 @@ export default function ClientSpaceModal({ isOpen, onClose }) {
           </button>
 
           <button
+            aria-label="Fermer l'espace client"
             className="p-2 hover:bg-surface-container-high transition-colors text-on-surface-variant"
             onClick={onClose}
             type="button"

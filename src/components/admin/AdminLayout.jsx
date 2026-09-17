@@ -41,10 +41,38 @@ export default function AdminLayout() {
   const [kpis, setKpis] = useState(null);
   const [rooms, setRooms] = useState([]);
 
+  // Set noindex meta tag for admin portal
+  useEffect(() => {
+    const prevTitle = document.title;
+    document.title = 'Administration | Hôtel Sainte Emmanuelle';
+
+    let metaRobots = document.querySelector('meta[name="robots"]');
+    let created = false;
+    if (!metaRobots) {
+      metaRobots = document.createElement('meta');
+      metaRobots.setAttribute('name', 'robots');
+      document.head.appendChild(metaRobots);
+      created = true;
+    }
+    const prevRobots = metaRobots.getAttribute('content');
+    metaRobots.setAttribute('content', 'noindex, nofollow');
+
+    return () => {
+      document.title = prevTitle;
+      if (created) {
+        metaRobots.remove();
+      } else if (prevRobots) {
+        metaRobots.setAttribute('content', prevRobots);
+      } else {
+        metaRobots.removeAttribute('content');
+      }
+    };
+  }, []);
+
   // Admin login form state for unauthenticated users
   const [loginForm, setLoginForm] = useState({
-    email: 'admin@hotel-sainte-emmanuelle.ci',
-    password: 'admin1234',
+    email: '',
+    password: '',
   });
   const [loginLoading, setLoginLoading] = useState(false);
   const [loginError, setLoginError] = useState('');

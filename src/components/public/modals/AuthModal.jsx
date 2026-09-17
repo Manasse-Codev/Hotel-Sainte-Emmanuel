@@ -77,11 +77,6 @@ export default function AuthModal({ mode, isOpen, onClose, onSuccess }) {
     }
   };
 
-  const fillDemo = () => {
-    setForm({ firstname: 'Jean', lastname: 'Kouassi', email: 'client@hotel-sainte-emmanuelle.ci', password: 'client1234', phone: '+225 07 08 09 10 11' });
-    setView('login');
-  };
-
   if (!isOpen) return null;
 
   return (
@@ -92,6 +87,7 @@ export default function AuthModal({ mode, isOpen, onClose, onSuccess }) {
       <div className="bg-surface w-full max-w-md relative animate-slide-up shadow-2xl">
         {/* Close */}
         <button
+          aria-label="Fermer la fenêtre d'authentification"
           className="absolute top-4 right-4 p-2 hover:bg-surface-container transition-colors text-on-surface-variant"
           onClick={onClose}
           type="button"
@@ -119,20 +115,6 @@ export default function AuthModal({ mode, isOpen, onClose, onSuccess }) {
                 : 'Saisissez votre email pour recevoir votre code de réinitialisation.'}
             </p>
           </div>
-
-          {/* Quick Demo Credentials */}
-          {view === 'login' && (
-            <div className="mb-6 p-3 bg-surface-container-low border border-outline-variant/30 text-xs flex items-center justify-between">
-              <span className="text-on-surface-variant font-medium">Compte démo client :</span>
-              <button
-                className="px-2.5 py-1 bg-surface border border-outline-variant/50 text-primary hover:border-primary transition-colors text-label-xs font-semibold"
-                onClick={fillDemo}
-                type="button"
-              >
-                Remplir Démo
-              </button>
-            </div>
-          )}
 
           <form className="space-y-4" onSubmit={handleSubmit}>
             {view === 'register' && (

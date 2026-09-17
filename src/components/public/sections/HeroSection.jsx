@@ -64,6 +64,9 @@ export default function HeroSection() {
           <img
             alt="Façade de l'Hôtel Sainte Emmanuelle à Soubré"
             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+            decoding="async"
+            fetchPriority="high"
+            loading="eager"
             src="https://lh3.googleusercontent.com/aida-public/AB6AXuDNgu0QWrMhs1smgBH0M6oeoEyKdgkEQShYLJ6Jh27iEj05NvF8Pki6ANO8jT3S5eHpwUvLJahXQQaqkGsGs3E68qrwo2n63xI1NE-np8HUI7jyTMkyY1BlxEJMVgBOyIonorBYdwqeBftTyeSL7diE975uNWi5ZyvB3zg0ppXUQ6ZC8bFeFntPjR_jZowISHbah625FpkzwcXONjc3qZoJBcRGTZyEnjuGc9x5qLC450JZPAPp8YK6vWpDglcVkHNqzA"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />

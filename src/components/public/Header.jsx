@@ -86,6 +86,7 @@ export default function Header({ onOpenAuth, onOpenClientSpace }) {
 
           {/* Mobile menu toggle */}
           <button
+            aria-label={mobileMenuOpen ? 'Fermer le menu' : 'Ouvrir le menu principal'}
             className="xl:hidden p-2 text-primary"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             type="button"

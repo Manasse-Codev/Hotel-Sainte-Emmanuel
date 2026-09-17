@@ -34,6 +34,7 @@ export default function LightboxModal({ image, isOpen, onClose }) {
     >
       {/* Close */}
       <button
+        aria-label="Fermer la vue agrandie"
         className="absolute top-6 right-6 p-2 text-white/70 hover:text-white transition-colors"
         onClick={onClose}
         type="button"
@@ -43,6 +44,7 @@ export default function LightboxModal({ image, isOpen, onClose }) {
 
       {/* Prev */}
       <button
+        aria-label="Photo précédente"
         className="absolute left-6 p-3 text-white/70 hover:text-white transition-colors"
         onClick={() => navigate(-1)}
         type="button"
@@ -67,6 +69,7 @@ export default function LightboxModal({ image, isOpen, onClose }) {
 
       {/* Next */}
       <button
+        aria-label="Photo suivante"
         className="absolute right-6 p-3 text-white/70 hover:text-white transition-colors"
         onClick={() => navigate(1)}
         type="button"

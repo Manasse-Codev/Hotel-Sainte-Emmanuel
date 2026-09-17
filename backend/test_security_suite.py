@@ -84,17 +84,30 @@ def run_tests():
     assert_test("Admin login succeeds", st == 200 and "access_token" in res, f"st={st}, res={res}")
     admin_token = res.get("access_token")
 
-    # Valid Client Login
+    # Valid Client Login (register dynamically if not present)
+    client_email = "security_suite_client@test.ci"
     st, res, _ = make_request("/auth/login", "POST", {
-        "email": "client@hotel-sainte-emmanuelle.ci",
+        "email": client_email,
         "password": "client1234"
     }, client_ip="10.0.0.2")
+    if st != 200:
+        make_request("/auth/register", "POST", {
+            "first_name": "Jean",
+            "last_name": "Test",
+            "email": client_email,
+            "password": "client1234",
+            "phone": "+2250100000001"
+        }, client_ip="10.0.0.2")
+        st, res, _ = make_request("/auth/login", "POST", {
+            "email": client_email,
+            "password": "client1234"
+        }, client_ip="10.0.0.2")
     assert_test("Client login succeeds", st == 200 and "access_token" in res, f"st={st}, res={res}")
     client_a_token = res.get("access_token")
 
     # Invalid Password
     st, res, _ = make_request("/auth/login", "POST", {
-        "email": "client@hotel-sainte-emmanuelle.ci",
+        "email": client_email,
         "password": "wrongpassword123"
     }, client_ip="10.0.0.3")
     assert_test("Wrong credentials rejected with 401", st == 401, f"st={st}")

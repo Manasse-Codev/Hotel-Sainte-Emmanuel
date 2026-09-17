@@ -1,0 +1,20 @@
+# Robots.txt — Hôtel Sainte Emmanuelle (Soubré, Côte d'Ivoire)
+User-agent: *
+Allow: /
+Allow: /#chambres
+Allow: /#experience
+Allow: /#galerie
+Allow: /#offres
+Allow: /#infos
+Allow: /#contact
+Allow: /#reservation
+
+# Désindexation stricte de l'administration et des routes privées
+Disallow: /admin
+Disallow: /admin/
+Disallow: /espace-client
+Disallow: /api/
+Disallow: /backend/
+
+# Emplacement du sitemap officiel
+Sitemap: https://hotel-sainte-emmanuelle.ci/sitemap.xml
