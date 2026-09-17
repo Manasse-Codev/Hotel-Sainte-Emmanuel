@@ -1,17 +1,19 @@
 import json
-from datetime import datetime, date, timedelta
 from sqlalchemy.orm import Session
 from .models.user import User
 from .models.room import Room
-from .models.reservation import Reservation
-from .models.payment import Payment
-from .models.review import Review
-from .models.notification import Notification
-from .models.activity import Activity
 from .models.setting import Setting
 from .core.security import hash_password
 
 def seed_database(db: Session):
+    """
+    Production database seeding.
+    Initializes only essential resources:
+    1. Default Admin User (if not exists)
+    2. Hotel Rooms Catalog (if not exists)
+    3. Hotel Default Production Settings (if not exists)
+    No demo or mock client/booking data is seeded.
+    """
     # 1. Create Admin User if not exists
     admin = db.query(User).filter(User.email == "admin@hotel-sainte-emmanuelle.ci").first()
     if not admin:
@@ -19,7 +21,7 @@ def seed_database(db: Session):
             first_name="Admin",
             last_name="HSE",
             email="admin@hotel-sainte-emmanuelle.ci",
-            phone="+225 07 00 00 00 00",
+            phone="+225 01 71 62 60 60",
             password_hash=hash_password("admin1234"),
             role="admin",
             loyalty_tier="gold",
@@ -29,24 +31,7 @@ def seed_database(db: Session):
         db.commit()
         db.refresh(admin)
 
-    # 2. Create Demo Client if not exists
-    client = db.query(User).filter(User.email == "client@hotel-sainte-emmanuelle.ci").first()
-    if not client:
-        client = User(
-            first_name="Jean",
-            last_name="Kouassi",
-            email="client@hotel-sainte-emmanuelle.ci",
-            phone="+225 07 08 09 10 11",
-            password_hash=hash_password("client1234"),
-            role="client",
-            loyalty_tier="gold",
-            is_verified=True,
-        )
-        db.add(client)
-        db.commit()
-        db.refresh(client)
-
-    # 3. Seed Rooms
+    # 2. Seed Rooms (Standard, Supérieure, Suite Deluxe)
     if db.query(Room).count() == 0:
         rooms_data = [
             {
@@ -119,113 +104,23 @@ def seed_database(db: Session):
             db.add(room)
         db.commit()
 
-    # 4. Seed Initial Reservations for Client & Demo
-    if db.query(Reservation).count() == 0 and client:
-        today = date.today()
-        res1 = Reservation(
-            id="SE-8921",
-            user_id=client.id,
-            room_id="deluxe",
-            guest_name="Jean Kouassi",
-            phone=client.phone,
-            check_in=today + timedelta(days=5),
-            check_out=today + timedelta(days=8),
-            guests=2,
-            total_amount=225000,
-            status="confirmed",
-            special_requests="Arrivée tardive vers 20h. Bouteille d'eau fraîche en chambre.",
-        )
-        res2 = Reservation(
-            id="SE-8918",
-            user_id=client.id,
-            room_id="superieure",
-            guest_name="Jean Kouassi",
-            phone=client.phone,
-            check_in=today - timedelta(days=20),
-            check_out=today - timedelta(days=17),
-            guests=1,
-            total_amount=165000,
-            status="completed",
-            special_requests="Chambre au calme demandée.",
-        )
-        db.add_all([res1, res2])
-        db.commit()
-
-        # Seed Payments
-        pay1 = Payment(
-            id="PAY-2025-041",
-            reservation_id="SE-8921",
-            user_id=client.id,
-            amount=225000,
-            status="validated",
-            payment_method="Wave",
-            transaction_reference="WAVE-CI-984210",
-        )
-        pay2 = Payment(
-            id="PAY-2025-038",
-            reservation_id="SE-8918",
-            user_id=client.id,
-            amount=165000,
-            status="validated",
-            payment_method="Orange Money",
-            transaction_reference="OM-CI-773412",
-        )
-        db.add_all([pay1, pay2])
-
-        # Seed Reviews
-        rev = Review(
-            user_id=client.id,
-            reservation_id="SE-8918",
-            rating=5,
-            comment="Un accueil remarquable à Soubré ! La literie est d'un confort irréprochable et le personnel d'une délicatesse rare.",
-            status="approved",
-        )
-        db.add(rev)
-
-        # Seed Notifications
-        notif1 = Notification(
-            user_id=client.id,
-            title="Réservation confirmée",
-            message="Votre séjour en Suite Deluxe du 22 au 25 Octobre 2025 est validé. Réf : SE-8921.",
-            is_read=False,
-        )
-        notif2 = Notification(
-            user_id=client.id,
-            title="Paiement validé",
-            message="Votre paiement Wave de 225 000 FCFA a bien été enregistré avec succès.",
-            is_read=True,
-        )
-        db.add_all([notif1, notif2])
-
-        # Seed Activities
-        act1 = Activity(
-            user_id=client.id,
-            action="reservation",
-            description="Réservation confirmée pour la Suite Deluxe (SE-8921)",
-        )
-        act2 = Activity(
-            user_id=client.id,
-            action="payment",
-            description="Paiement de 225 000 FCFA validé via Wave",
-        )
-        db.add_all([act1, act2])
-
-        db.commit()
-
-    # 5. Seed Hotel Settings
+    # 3. Seed Hotel Production Settings
     default_settings = {
         "hotel_name": "Hôtel Sainte Emmanuelle",
         "city": "Soubré, Côte d'Ivoire",
         "region": "Région de la Nawa",
         "address": "Quartier Nabouhi, non loin de l'EPP Nabouhi",
-        "phone": "+225 07 07 12 34 56",
-        "whatsapp": "+225 05 05 98 76 54",
+        "phone": "+225 01 71 62 60 60",
+        "whatsapp": "+225 01 71 62 60 60",
         "email": "contact@hotel-sainte-emmanuelle.ci",
         "checkin_time": "14:00",
         "checkout_time": "12:00",
         "currency": "FCFA",
     }
     for k, v in default_settings.items():
-        if not db.query(Setting).filter(Setting.key == k).first():
+        existing = db.query(Setting).filter(Setting.key == k).first()
+        if not existing:
             db.add(Setting(key=k, value=v))
+        else:
+            existing.value = v
     db.commit()
