@@ -77,14 +77,9 @@ export default function AuthModal({ mode, isOpen, onClose, onSuccess }) {
     }
   };
 
-  const fillDemo = (type) => {
-    if (type === 'client') {
-      setForm({ firstname: 'Jean', lastname: 'Kouassi', email: 'client@hotel-sainte-emmanuelle.ci', password: 'client1234', phone: '+225 07 08 09 10 11' });
-      setView('login');
-    } else {
-      setForm({ firstname: 'Admin', lastname: 'HSE', email: 'admin@hotel-sainte-emmanuelle.ci', password: 'admin1234', phone: '+225 07 00 00 00 00' });
-      setView('login');
-    }
+  const fillDemo = () => {
+    setForm({ firstname: 'Jean', lastname: 'Kouassi', email: 'client@hotel-sainte-emmanuelle.ci', password: 'client1234', phone: '+225 07 08 09 10 11' });
+    setView('login');
   };
 
   if (!isOpen) return null;
@@ -128,23 +123,14 @@ export default function AuthModal({ mode, isOpen, onClose, onSuccess }) {
           {/* Quick Demo Credentials */}
           {view === 'login' && (
             <div className="mb-6 p-3 bg-surface-container-low border border-outline-variant/30 text-xs flex items-center justify-between">
-              <span className="text-on-surface-variant font-medium">Comptes démo :</span>
-              <div className="flex gap-2">
-                <button
-                  className="px-2.5 py-1 bg-surface border border-outline-variant/50 text-primary hover:border-primary transition-colors text-label-xs font-semibold"
-                  onClick={() => fillDemo('client')}
-                  type="button"
-                >
-                  Client Démo
-                </button>
-                <button
-                  className="px-2.5 py-1 bg-surface border border-outline-variant/50 text-secondary hover:border-secondary transition-colors text-label-xs font-semibold"
-                  onClick={() => fillDemo('admin')}
-                  type="button"
-                >
-                  Admin HSE
-                </button>
-              </div>
+              <span className="text-on-surface-variant font-medium">Compte démo client :</span>
+              <button
+                className="px-2.5 py-1 bg-surface border border-outline-variant/50 text-primary hover:border-primary transition-colors text-label-xs font-semibold"
+                onClick={fillDemo}
+                type="button"
+              >
+                Remplir Démo
+              </button>
             </div>
           )}
 

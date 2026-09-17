@@ -65,7 +65,7 @@ def run_e2e():
     # 6. Check Room Availability
     from datetime import date, timedelta
     import random
-    offset = random.randint(30, 200)
+    offset = random.randint(300, 2000)
     d_in = (date.today() + timedelta(days=offset)).isoformat()
     d_out = (date.today() + timedelta(days=offset + 4)).isoformat()
     d_conflict_in = (date.today() + timedelta(days=offset + 2)).isoformat()
@@ -89,10 +89,10 @@ def run_e2e():
         "guests": 2,
         "special_requests": "Vue sur le jardin si possible"
     }, token=client_token)
-    assert status == 200 and booking["status"] == "confirmed", f"Booking failed: {booking}"
+    assert status == 200 and booking["status"] == "pending", f"Booking failed: {booking}"
     booking_id = booking["id"]
     total_price = booking["total_amount"]
-    print(f"✓ 7. Reservation created successfully (ID: {booking_id}, Total: {total_price} FCFA)")
+    print(f"✓ 7. Reservation created successfully (ID: {booking_id}, Total: {total_price} FCFA, Status: '{booking['status']}')")
 
     # 8. Check Overlap availability (Should now be false)
     status, avail_conflict = request("POST", "/api/reservations/check-availability", {

@@ -54,8 +54,59 @@ export default function StatistiquesPage() {
         </span>
         <h2 className="font-bodoni text-headline-lg text-primary mt-1">Statistiques & Revenus</h2>
         <p className="font-jakarta text-body-sm text-on-surface-variant mt-0.5">
-          Indicateurs financiers consolidés pour l'Hôtel Sainte Emmanuelle à Soubré.
+          Indicateurs financiers consolidés pour l'Hôtel Sainte Emmanuelle à Soubré (source SQLite en direct).
         </p>
+      </div>
+
+      {/* Résumé des métriques réelles calculées */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="bg-surface-container-lowest border border-outline-variant/30 p-5 shadow-xs">
+          <div className="flex items-center justify-between text-on-surface-variant mb-2">
+            <span className="font-jakarta text-label-xs uppercase tracking-wider font-semibold">Réservations</span>
+            <span className="material-symbols-outlined text-secondary" style={{ fontSize: '20px' }}>book_online</span>
+          </div>
+          <div className="font-bodoni text-headline-md text-primary font-bold">{stats?.total_reservations ?? 0}</div>
+          <div className="font-jakarta text-label-xs text-on-surface-variant mt-1">
+            {stats?.confirmed_reservations ?? 0} confirmée(s) · {stats?.pending_reservations ?? 0} en attente
+          </div>
+        </div>
+
+        <div className="bg-surface-container-lowest border border-outline-variant/30 p-5 shadow-xs">
+          <div className="flex items-center justify-between text-on-surface-variant mb-2">
+            <span className="font-jakarta text-label-xs uppercase tracking-wider font-semibold">Clients Actifs</span>
+            <span className="material-symbols-outlined text-secondary" style={{ fontSize: '20px' }}>group</span>
+          </div>
+          <div className="font-bodoni text-headline-md text-primary font-bold">{stats?.total_clients ?? 0}</div>
+          <div className="font-jakarta text-label-xs text-on-surface-variant mt-1">
+            Comptes clients enregistrés
+          </div>
+        </div>
+
+        <div className="bg-surface-container-lowest border border-outline-variant/30 p-5 shadow-xs">
+          <div className="flex items-center justify-between text-on-surface-variant mb-2">
+            <span className="font-jakarta text-label-xs uppercase tracking-wider font-semibold">Chambres Libres</span>
+            <span className="material-symbols-outlined text-secondary" style={{ fontSize: '20px' }}>meeting_room</span>
+          </div>
+          <div className="font-bodoni text-headline-md text-primary font-bold">
+            {stats?.available_rooms ?? 0} / {stats?.total_rooms ?? 0}
+          </div>
+          <div className="font-jakarta text-label-xs text-on-surface-variant mt-1">
+            Taux d'occupation : {stats?.occupancy_rate ?? 0}%
+          </div>
+        </div>
+
+        <div className="bg-surface-container-lowest border border-outline-variant/30 p-5 shadow-xs">
+          <div className="flex items-center justify-between text-on-surface-variant mb-2">
+            <span className="font-jakarta text-label-xs uppercase tracking-wider font-semibold">Revenus Encaissés</span>
+            <span className="material-symbols-outlined text-secondary" style={{ fontSize: '20px' }}>payments</span>
+          </div>
+          <div className="font-bodoni text-headline-md text-secondary font-bold">
+            {(stats?.totalRevenue ?? 0).toLocaleString()}
+          </div>
+          <div className="font-jakarta text-label-xs text-on-surface-variant mt-1">
+            FCFA validés en caisse
+          </div>
+        </div>
       </div>
 
       {/* Revenus mensuels */}

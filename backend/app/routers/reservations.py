@@ -44,13 +44,13 @@ def check_availability(data: CheckAvailabilityRequest, db: Session = Depends(get
     if not room:
         raise HTTPException(status_code=404, detail="Chambre introuvable")
 
-    if room.status == "maintenance":
+    if room.status in ["maintenance", "unavailable"]:
         return CheckAvailabilityResponse(
             available=False,
             nights=0,
             price_per_night=room.price,
             total_amount=0,
-            message="Cette chambre est actuellement en maintenance.",
+            message="Cette chambre est actuellement indisponible ou en maintenance.",
         )
 
     # Check overlaps with confirmed/pending bookings
@@ -108,8 +108,8 @@ def create_reservation(
     room = db.query(Room).filter(Room.id == data.room_id).first()
     if not room:
         raise HTTPException(status_code=404, detail="Chambre introuvable.")
-    if room.status == "maintenance":
-        raise HTTPException(status_code=400, detail="Chambre en maintenance.")
+    if room.status in ["maintenance", "unavailable"]:
+        raise HTTPException(status_code=400, detail="Cette chambre est actuellement indisponible ou en maintenance.")
 
     # Collision check
     overlap = db.query(Reservation).filter(
@@ -142,7 +142,7 @@ def create_reservation(
         check_out=data.check_out,
         guests=data.guests,
         total_amount=total_amount,
-        status="confirmed",
+        status="pending",
         special_requests=data.special_requests,
     )
     db.add(reservation)
@@ -150,14 +150,14 @@ def create_reservation(
     # Notification for user
     notif = Notification(
         user_id=current_user.id,
-        title="Réservation enregistrée !",
-        message=f"Votre séjour ({room.name}) du {data.check_in.strftime('%d/%m/%Y')} au {data.check_out.strftime('%d/%m/%Y')} a été réservé avec succès. Référence : {res_id}.",
+        title="Demande de réservation reçue",
+        message=f"Votre demande de réservation ({res_id}) pour {room.name} du {data.check_in.strftime('%d/%m/%Y')} au {data.check_out.strftime('%d/%m/%Y')} a été transmise à la réception. Statut : En attente.",
     )
     # Activity log
     act = Activity(
         user_id=current_user.id,
-        action="reservation",
-        description=f"Nouvelle réservation {res_id} pour {room.name} ({total_amount:,} FCFA)",
+        action="reservation_created",
+        description=f"Nouvelle réservation {res_id} pour {room.name} ({total_amount:,} FCFA) — Statut : En attente",
     )
     db.add_all([notif, act])
     db.commit()

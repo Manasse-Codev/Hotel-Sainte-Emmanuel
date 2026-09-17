@@ -44,17 +44,17 @@ export default function DashboardPage({ onNewBooking }) {
     }
   };
 
-  const occupancyRate = kpis ? kpis.occupancy_rate : 83;
-  const totalRevenue = kpis ? kpis.monthly_revenue : 3820000;
-  const checkinsToday = kpis ? kpis.checkins_today : 2;
-  const pendingReservations = kpis ? kpis.pending_reservations : 1;
+  const occupancyRate = kpis ? kpis.occupancy_rate : 0;
+  const totalRevenue = kpis ? kpis.monthly_revenue : 0;
+  const checkinsToday = kpis ? kpis.checkins_today : 0;
+  const pendingReservations = kpis ? kpis.pending_reservations : 0;
 
   const kpisList = [
     {
       id: 'occupancy',
       label: 'Taux d\'Occupation',
       value: `${occupancyRate}%`,
-      unit: `(${kpis ? kpis.occupied_rooms : 2} / ${kpis ? kpis.total_rooms : 3} Chambres)`,
+      unit: `(${kpis ? kpis.occupied_rooms : 0} / ${kpis ? kpis.total_rooms : 0} Chambres)`,
       icon: 'hotel',
       trend: `${occupancyRate}% actuel`,
       trendLabel: 'au domaine de Soubré',
