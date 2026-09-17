@@ -452,8 +452,8 @@ export default function ContactSection({ onOpenAuth, onOpenClientSpace, selected
                 </span>
                 <div className="font-bodoni text-headline-sm mb-1">Hôtel Sainte Emmanuelle</div>
                 <p className="font-jakarta text-body-md text-on-surface-variant">
-                  Quartier Résidentiel, Ville de Soubré<br />
-                  Région de la Nawa — Côte d'Ivoire
+                  Quartier Nabouhi, non loin de l'EPP Nabouhi<br />
+                  Ville de Soubré, Région de la Nawa — Côte d'Ivoire
                 </p>
               </div>
 

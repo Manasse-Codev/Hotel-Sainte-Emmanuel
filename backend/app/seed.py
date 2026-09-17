@@ -217,6 +217,7 @@ def seed_database(db: Session):
         "hotel_name": "Hôtel Sainte Emmanuelle",
         "city": "Soubré, Côte d'Ivoire",
         "region": "Région de la Nawa",
+        "address": "Quartier Nabouhi, non loin de l'EPP Nabouhi",
         "phone": "+225 07 07 12 34 56",
         "whatsapp": "+225 05 05 98 76 54",
         "email": "contact@hotel-sainte-emmanuelle.ci",

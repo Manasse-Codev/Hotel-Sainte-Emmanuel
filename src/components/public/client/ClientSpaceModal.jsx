@@ -21,7 +21,7 @@ const tabs = [
 ];
 
 export default function ClientSpaceModal({ isOpen, onClose }) {
-  const { user, logout } = useAuth();
+  const { user, logout, isAdmin } = useAuth();
   const [activeTab, setActiveTab] = useState('dashboard');
 
   useEffect(() => {
@@ -88,6 +88,16 @@ export default function ClientSpaceModal({ isOpen, onClose }) {
               </div>
             </div>
           </div>
+
+          {isAdmin && (
+            <a
+              href="/admin"
+              className="flex items-center gap-1.5 bg-primary text-on-primary px-3 py-2 font-jakarta text-label-sm uppercase tracking-wider hover:opacity-90 transition-opacity"
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>admin_panel_settings</span>
+              <span className="hidden sm:inline">Portail Admin</span>
+            </a>
+          )}
 
           <button
             className="flex items-center gap-1.5 border border-outline-variant/40 px-3 py-2 hover:bg-surface-container-high transition-colors font-jakarta text-label-sm uppercase tracking-wider text-primary"

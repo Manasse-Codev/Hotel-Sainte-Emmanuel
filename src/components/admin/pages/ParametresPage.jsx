@@ -6,6 +6,7 @@ export default function ParametresPage() {
     hotel_name: 'Hôtel Sainte Emmanuelle',
     city: 'Soubré, Côte d\'Ivoire',
     region: 'Région de la Nawa',
+    address: 'Quartier Nabouhi, non loin de l\'EPP Nabouhi',
     phone: '+225 07 07 12 34 56',
     whatsapp: '+225 05 05 98 76 54',
     email: 'contact@hotel-sainte-emmanuelle.ci',
@@ -92,6 +93,18 @@ export default function ParametresPage() {
                 name="city"
                 onChange={handleChange}
                 value={settings.city || ''}
+              />
+            </div>
+            <div className="md:col-span-2">
+              <label className="block font-jakarta text-label-xs uppercase tracking-wider text-on-surface-variant mb-1">
+                Adresse & Localisation
+              </label>
+              <input
+                className="w-full border border-outline-variant/40 bg-surface px-3 py-2 text-body-sm focus:border-primary focus:outline-none"
+                name="address"
+                onChange={handleChange}
+                value={settings.address || ''}
+                placeholder="Ex: Quartier Nabouhi, non loin de l'EPP Nabouhi"
               />
             </div>
             <div>
