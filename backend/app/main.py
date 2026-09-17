@@ -22,12 +22,13 @@ async def lifespan(app: FastAPI):
     # Initialize SQLite tables
     Base.metadata.create_all(bind=engine)
 
-    # SQLite migration: Ensure reset_token_expires_at exists in users table
-    with engine.connect() as conn:
-        cols = [row[1] for row in conn.exec_driver_sql("PRAGMA table_info(users)").fetchall()]
-        if "reset_token_expires_at" not in cols:
-            conn.exec_driver_sql("ALTER TABLE users ADD COLUMN reset_token_expires_at DATETIME")
-            conn.commit()
+    # SQLite-only migration: Ensure reset_token_expires_at exists in users table
+    if "sqlite" in settings.DATABASE_URL:
+        with engine.connect() as conn:
+            cols = [row[1] for row in conn.exec_driver_sql("PRAGMA table_info(users)").fetchall()]
+            if "reset_token_expires_at" not in cols:
+                conn.exec_driver_sql("ALTER TABLE users ADD COLUMN reset_token_expires_at DATETIME")
+                conn.commit()
 
     # Seed default data (admin, demo user, rooms, etc.)
     db = SessionLocal()
