@@ -12,7 +12,6 @@ export default function DashboardPage({ onNewBooking }) {
   const [kpis, setKpis] = useState(null);
   const [movements, setMovements] = useState([]);
   const [activities, setActivities] = useState([]);
-  const [loading, setLoading] = useState(true);
 
   const loadDashboardData = async () => {
     try {
@@ -26,8 +25,6 @@ export default function DashboardPage({ onNewBooking }) {
       setActivities(actData || []);
     } catch (err) {
       console.warn('Dashboard load error:', err.message);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -44,10 +41,11 @@ export default function DashboardPage({ onNewBooking }) {
     }
   };
 
-  const occupancyRate = kpis ? kpis.occupancy_rate : 0;
+  const occupancyRate = kpis ? Math.round(kpis.occupancy_rate) : 0;
   const totalRevenue = kpis ? kpis.monthly_revenue : 0;
   const checkinsToday = kpis ? kpis.checkins_today : 0;
   const pendingReservations = kpis ? kpis.pending_reservations : 0;
+  const pendingReviews = kpis ? kpis.pending_reviews : 0;
 
   const kpisList = [
     {
@@ -56,8 +54,8 @@ export default function DashboardPage({ onNewBooking }) {
       value: `${occupancyRate}%`,
       unit: `(${kpis ? kpis.occupied_rooms : 0} / ${kpis ? kpis.total_rooms : 0} Chambres)`,
       icon: 'hotel',
-      trend: `${occupancyRate}% actuel`,
-      trendLabel: 'au domaine de Soubré',
+      trend: `${occupancyRate}% d'occupation`,
+      trendLabel: 'actuellement occupées',
       trendPositive: true,
       progress: occupancyRate,
       progressColor: 'bg-secondary',
@@ -68,35 +66,35 @@ export default function DashboardPage({ onNewBooking }) {
       value: `${totalRevenue.toLocaleString()} FCFA`,
       unit: '',
       icon: 'payments',
-      trend: 'Encaissements validés',
-      trendLabel: 'par Mobile Money & Espèces',
+      trend: 'Règlements validés',
+      trendLabel: 'Mobile Money & Espèces',
       trendPositive: true,
-      progress: Math.min(100, Math.round((totalRevenue / 5000000) * 100)),
+      progress: totalRevenue > 0 ? 100 : 0,
       progressColor: 'bg-primary',
     },
     {
       id: 'arrivals',
-      label: 'Mouvements Actifs',
+      label: 'Mouvements du Jour',
       value: `${movements.length}`,
-      unit: 'Dossiers',
+      unit: 'Dossier(s)',
       icon: 'flight_land',
-      trend: `${checkinsToday} séjour(s) aujourd'hui`,
-      trendLabel: 'protocole VIP',
+      trend: `${checkinsToday} arrivée(s) prévue(s)`,
+      trendLabel: "aujourd'hui",
       trendPositive: true,
-      progress: 75,
+      progress: movements.length > 0 ? 100 : 0,
       progressColor: 'bg-secondary',
     },
     {
-      id: 'satisfaction',
-      label: 'Qualité & Avis',
-      value: '4.9',
-      unit: '/ 5 ★',
-      icon: 'star',
-      trend: `${kpis?.pending_reviews || 0} avis en attente`,
-      trendLabel: 'note d\'excellence',
-      trendPositive: true,
-      progress: 98,
-      progressColor: 'bg-emerald-600',
+      id: 'pending',
+      label: 'Dossiers à Traiter',
+      value: `${pendingReservations}`,
+      unit: 'Réservation(s)',
+      icon: 'pending_actions',
+      trend: `${pendingReviews} avis en attente`,
+      trendLabel: 'à vérifier et modérer',
+      trendPositive: pendingReservations === 0,
+      progress: pendingReservations > 0 ? 100 : 0,
+      progressColor: pendingReservations > 0 ? 'bg-secondary' : 'bg-emerald-600',
     },
   ];
 

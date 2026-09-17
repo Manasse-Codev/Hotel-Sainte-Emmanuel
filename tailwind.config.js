@@ -53,11 +53,6 @@ export default {
         'surface-container-high': '#e9e8e4',
         'tertiary-container': '#1c1c18',
         'surface-dim': '#dbdad6',
-        'inverse-on-surface': '#f2f1ed',
-        'on-tertiary': '#ffffff',
-        'on-secondary-container': '#785a1a',
-        'secondary-fixed': '#ffdea5',
-        'secondary-fixed-dim': '#e9c176',
       },
       borderRadius: {
         DEFAULT: '0.25rem',

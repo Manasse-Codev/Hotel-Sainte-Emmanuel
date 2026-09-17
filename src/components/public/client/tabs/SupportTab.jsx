@@ -16,7 +16,7 @@ export default function SupportTab() {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {[
           { icon: 'call', label: 'Téléphone', value: '+225 01 71 62 60 60', note: 'Réception 24h/24' },
-          { icon: 'email', label: 'E-mail', value: 'contact@hotel-se.ci', note: 'Réponse sous 24h' },
+          { icon: 'email', label: 'E-mail', value: 'contact@hotel-sainte-emmanuelle.ci', note: 'Réponse sous 24h' },
           { icon: 'location_on', label: 'Adresse', value: 'Quartier Nabouhi, non loin de l\'EPP Nabouhi', note: 'Soubré, Région de la Nawa' },
         ].map((item) => (
           <div key={item.label} className="border border-outline-variant/30 p-4 text-center space-y-2">

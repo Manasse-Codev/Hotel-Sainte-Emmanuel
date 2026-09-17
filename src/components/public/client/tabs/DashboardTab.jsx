@@ -3,7 +3,6 @@ import { api } from '../../../../services/api';
 
 export default function DashboardTab({ user }) {
   const [reservations, setReservations] = useState([]);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function loadData() {
@@ -12,8 +11,6 @@ export default function DashboardTab({ user }) {
         setReservations(res || []);
       } catch (err) {
         console.warn('Erreur chargement réservations client:', err.message);
-      } finally {
-        setLoading(false);
       }
     }
     loadData();

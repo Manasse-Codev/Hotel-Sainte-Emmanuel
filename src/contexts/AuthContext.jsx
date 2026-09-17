@@ -37,7 +37,7 @@ export function AuthProvider({ children }) {
   const login = useCallback(async (emailOrUserData, maybePassword) => {
     // If called with email and password
     if (typeof emailOrUserData === 'string' && maybePassword) {
-      const res = await api.auth.login(emailOrUserData, maybePassword);
+      await api.auth.login(emailOrUserData, maybePassword);
       // Fetch full profile with stats
       const me = await api.auth.getMe();
       setUser(me);

@@ -14,7 +14,7 @@ const tabs = [
   { id: 'reservations', label: 'Mes Réservations', icon: 'book_online' },
   { id: 'profile', label: 'Mon Profil', icon: 'manage_accounts' },
   { id: 'payments', label: 'Paiements', icon: 'payments' },
-  { id: 'notifications', label: 'Notifications', icon: 'notifications', badge: 2 },
+  { id: 'notifications', label: 'Notifications', icon: 'notifications' },
   { id: 'reviews', label: 'Mes Avis', icon: 'rate_review' },
   { id: 'activity', label: 'Mon Activité', icon: 'history' },
   { id: 'support', label: 'Assistance', icon: 'support_agent' },
@@ -60,6 +60,10 @@ export default function ClientSpaceModal({ isOpen, onClose }) {
     }
   };
 
+  const firstName = user.first_name || user.firstname || '';
+  const lastName = user.last_name || user.lastname || '';
+  const initial = (firstName[0] || user.email?.[0] || 'C').toUpperCase();
+
   return (
     <div className="fixed inset-0 z-[100] bg-surface flex flex-col animate-fade-in">
       {/* Header de l'espace client */}
@@ -77,14 +81,14 @@ export default function ClientSpaceModal({ isOpen, onClose }) {
         <div className="flex items-center gap-3">
           <div className="hidden sm:flex items-center gap-3 pl-4 border-l border-outline-variant/30">
             <div className="w-9 h-9 bg-primary-container flex items-center justify-center font-jakarta text-label-md font-bold text-primary">
-              {(user.firstname?.[0] || 'C').toUpperCase()}
+              {initial}
             </div>
             <div className="hidden md:block">
               <div className="font-jakarta text-body-sm font-semibold text-primary leading-tight">
-                {user.firstname} {user.lastname}
+                {firstName} {lastName}
               </div>
               <div className="font-jakarta text-label-sm text-on-surface-variant tracking-wider uppercase">
-                {user.loyalty || 'Standard'}
+                {user.loyalty || 'Membre'}
               </div>
             </div>
           </div>

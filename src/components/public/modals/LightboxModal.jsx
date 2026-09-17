@@ -1,12 +1,19 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { galleryImages } from '../../../data/gallery';
 
 export default function LightboxModal({ image, isOpen, onClose }) {
-  const [current, setCurrent] = useState(null);
+  const [current, setCurrent] = useState(image);
 
   useEffect(() => {
-    if (image) setCurrent(image);
+    setCurrent(image);
   }, [image]);
+
+  const navigate = useCallback((dir) => {
+    if (!current) return;
+    const idx = galleryImages.findIndex((img) => img.id === current.id);
+    const next = galleryImages[(idx + dir + galleryImages.length) % galleryImages.length];
+    setCurrent(next);
+  }, [current]);
 
   useEffect(() => {
     const onKey = (e) => {
@@ -16,14 +23,7 @@ export default function LightboxModal({ image, isOpen, onClose }) {
     };
     if (isOpen) document.addEventListener('keydown', onKey);
     return () => document.removeEventListener('keydown', onKey);
-  }, [isOpen, current, onClose]);
-
-  const navigate = (dir) => {
-    if (!current) return;
-    const idx = galleryImages.findIndex((img) => img.id === current.id);
-    const next = galleryImages[(idx + dir + galleryImages.length) % galleryImages.length];
-    setCurrent(next);
-  };
+  }, [isOpen, navigate, onClose]);
 
   if (!isOpen || !current) return null;
 

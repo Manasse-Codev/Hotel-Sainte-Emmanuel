@@ -3,7 +3,6 @@ import { api } from '../../../services/api';
 
 export default function StatistiquesPage() {
   const [stats, setStats] = useState(null);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function loadStats() {
@@ -12,8 +11,6 @@ export default function StatistiquesPage() {
         setStats(data);
       } catch (err) {
         console.warn('Erreur stats admin:', err.message);
-      } finally {
-        setLoading(false);
       }
     }
     loadStats();

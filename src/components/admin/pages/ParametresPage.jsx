@@ -7,14 +7,13 @@ export default function ParametresPage() {
     city: 'Soubré, Côte d\'Ivoire',
     region: 'Région de la Nawa',
     address: 'Quartier Nabouhi, non loin de l\'EPP Nabouhi',
-    phone: '+225 07 07 12 34 56',
-    whatsapp: '+225 05 05 98 76 54',
+    phone: '+225 01 71 62 60 60',
+    whatsapp: '+225 01 71 62 60 60',
     email: 'contact@hotel-sainte-emmanuelle.ci',
     checkin_time: '14:00',
     checkout_time: '12:00',
     currency: 'FCFA',
   });
-  const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
 
@@ -27,8 +26,6 @@ export default function ParametresPage() {
         }
       } catch (err) {
         console.warn('Erreur chargement paramètres:', err.message);
-      } finally {
-        setLoading(false);
       }
     }
     loadSettings();

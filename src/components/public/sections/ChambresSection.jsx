@@ -5,7 +5,6 @@ import { api } from '../../../services/api';
 export default function ChambresSection({ onOpenRoom, onQuickBook }) {
   const sectionRef = useRef(null);
   const [roomList, setRoomList] = useState(initialRooms);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const el = sectionRef.current;
@@ -27,8 +26,6 @@ export default function ChambresSection({ onOpenRoom, onQuickBook }) {
         }
       } catch (err) {
         console.warn('Utilisation des données locales de chambres en fallback:', err.message);
-      } finally {
-        setLoading(false);
       }
     }
     fetchRooms();

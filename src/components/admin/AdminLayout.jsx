@@ -203,7 +203,7 @@ export default function AdminLayout() {
     }
   };
 
-  const occupancyRate = kpis ? kpis.occupancy_rate : 83;
+  const occupancyRate = kpis ? Math.round(kpis.occupancy_rate) : 0;
 
   return (
     <div className="h-screen bg-background text-on-background font-jakarta text-body-md antialiased flex flex-col overflow-hidden">
@@ -250,7 +250,7 @@ export default function AdminLayout() {
             <div>
               <span className="font-jakarta text-label-sm text-on-surface-variant block uppercase">Taux d'Occupation</span>
               <span className="font-jakarta text-body-sm font-semibold text-primary">
-                {occupancyRate}% <span className="font-normal text-on-surface-variant">({kpis ? kpis.occupied_rooms : 2} / {kpis ? kpis.total_rooms : 3} Chambres)</span>
+                {occupancyRate}% <span className="font-normal text-on-surface-variant">({kpis?.occupied_rooms ?? 0} / {kpis?.total_rooms ?? (rooms?.length || 0)} Chambres)</span>
               </span>
             </div>
           </div>

@@ -74,7 +74,7 @@ export default function Header({ onOpenAuth, onOpenClientSpace }) {
             type="button"
           >
             <span className="material-symbols-outlined text-sm text-secondary" style={{ fontSize: '16px' }}>account_circle</span>
-            <span>{user ? user.firstname : 'Mon Espace'}</span>
+            <span>{user ? (user.first_name || user.firstname || 'Mon Espace') : 'Mon Espace'}</span>
           </button>
 
           <a
@@ -122,7 +122,7 @@ export default function Header({ onOpenAuth, onOpenClientSpace }) {
               type="button"
             >
               <span className="material-symbols-outlined text-secondary" style={{ fontSize: '16px' }}>account_circle</span>
-              {user ? user.firstname : 'Mon Espace'}
+              {user ? (user.first_name || user.firstname || 'Mon Espace') : 'Mon Espace'}
             </button>
           </div>
         </div>

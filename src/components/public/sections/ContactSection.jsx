@@ -17,11 +17,32 @@ export default function ContactSection({ onOpenAuth, onOpenClientSpace, selected
     message: '',
   });
   const [availability, setAvailability] = useState(null);
-  const [checkingAvail, setCheckingAvail] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [createdReservation, setCreatedReservation] = useState(null);
   const [error, setError] = useState('');
+
+  const handleCreateReservation = async (reservationData) => {
+    setSubmitting(true);
+    setError('');
+    try {
+      const res = await api.reservations.create({
+        room_id: reservationData.room,
+        guest_name: reservationData.fullname,
+        phone: reservationData.phone,
+        check_in: reservationData.checkin,
+        check_out: reservationData.checkout,
+        guests: parseInt(reservationData.adults, 10) || 1,
+        special_requests: reservationData.message || undefined,
+      });
+      setCreatedReservation(res);
+      setSubmitted(true);
+    } catch (err) {
+      setError(err.message || 'Impossible de confirmer la réservation. Veuillez réessayer.');
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   // Fetch real rooms
   useEffect(() => {
@@ -97,14 +118,13 @@ export default function ContactSection({ onOpenAuth, onOpenClientSpace, selected
     }
 
     let isMounted = true;
-    setCheckingAvail(true);
     setError('');
 
     api.reservations.checkAvailability(form.room, form.checkin, form.checkout)
       .then((res) => {
         if (isMounted) setAvailability(res);
       })
-      .catch((err) => {
+      .catch(() => {
         if (isMounted) {
           // Calculate client-side fallback
           const roomObj = roomsList.find((r) => r.id === form.room);
@@ -118,9 +138,6 @@ export default function ContactSection({ onOpenAuth, onOpenClientSpace, selected
             message: 'Chambre disponible.',
           });
         }
-      })
-      .finally(() => {
-        if (isMounted) setCheckingAvail(false);
       });
 
     return () => { isMounted = false; };
@@ -129,28 +146,6 @@ export default function ContactSection({ onOpenAuth, onOpenClientSpace, selected
   const handleChange = (e) => {
     setError('');
     setForm((f) => ({ ...f, [e.target.name]: e.target.value }));
-  };
-
-  const handleCreateReservation = async (reservationData) => {
-    setSubmitting(true);
-    setError('');
-    try {
-      const res = await api.reservations.create({
-        room_id: reservationData.room,
-        guest_name: reservationData.fullname,
-        phone: reservationData.phone,
-        check_in: reservationData.checkin,
-        check_out: reservationData.checkout,
-        guests: parseInt(reservationData.adults, 10) || 1,
-        special_requests: reservationData.message || undefined,
-      });
-      setCreatedReservation(res);
-      setSubmitted(true);
-    } catch (err) {
-      setError(err.message || 'Impossible de confirmer la réservation. Veuillez réessayer.');
-    } finally {
-      setSubmitting(false);
-    }
   };
 
   const handleSubmit = (e) => {

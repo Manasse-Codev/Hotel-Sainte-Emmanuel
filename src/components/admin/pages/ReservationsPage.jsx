@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { api } from '../../../services/api';
 
 const statusStyles = {
@@ -28,25 +28,22 @@ export default function ReservationsPage() {
   // Selected reservation for detail modal
   const [selectedRes, setSelectedRes] = useState(null);
 
-  const fetchReservations = async () => {
+  const fetchReservations = useCallback(async () => {
     try {
       const data = await api.admin.getReservations();
       setReservations(data || []);
       // If modal is open, update selectedRes data
-      if (selectedRes) {
-        const updated = (data || []).find((r) => r.id === selectedRes.id);
-        if (updated) setSelectedRes(updated);
-      }
+      setSelectedRes((prev) => (prev ? (data || []).find((r) => r.id === prev.id) || prev : null));
     } catch (err) {
       console.warn('Erreur réservations admin:', err.message);
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchReservations();
-  }, []);
+  }, [fetchReservations]);
 
   const handleStatusChange = async (id, newStatus) => {
     setUpdatingId(id);
