@@ -17,4 +17,4 @@ Disallow: /api/
 Disallow: /backend/
 
 # Emplacement du sitemap officiel
-Sitemap: https://hotel-sainte-emmanuelle.ci/sitemap.xml
+Sitemap: https://hse-hotel.vercel.app/sitemap.xml
